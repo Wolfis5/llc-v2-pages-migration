@@ -1,0 +1,123 @@
+================================================================================
+MIGRATION OF START A BUSINESS PAGES - PROCESS DOCUMENTATION
+================================================================================
+
+Project: llc-v2-pages-migration
+Purpose: Migrate pages from Payload CMS to Statamic CMS
+Collection: /content/collections/start_a_business_pages/
+
+================================================================================
+HUMAN STEPS (Manual Process)
+================================================================================
+
+STEP 1: Provide URL to AI Agent
+-------------------------------
+- Give the production URL to the AI migration agent
+  Example: https://bizee.com/start-a-business/women-business
+- The AI will extract content and identify H2 sections
+- NOTE: Some pages had problems obtaining info due to HTML reduction
+  In those cases, pass the content explicitly to the AI agent
+
+STEP 2: Review Component Mapping Table
+--------------------------------------
+- The AI Agent provides a table with proposed components for each section
+- Review the table and make changes to match correct components
+- These pages use similar components to Statamic, so match the closest one
+- Send the final approved table back to the AI Agent
+
+STEP 3: Review Generated YAML File
+----------------------------------
+- The AI Agent generates the YAML file with all content
+- Once created, review for inconsistencies:
+  * Content accuracy
+  * Correct component structure
+  * SEO fields
+  * Links and images
+
+STEP 4: Iterative Fixes
+-----------------------
+- Identify wrong component migrations:
+  * Broken or incorrect links
+  * Images not updated (need to upload via CMS Tool manually)
+  * Content inconsistencies
+- Pass comments/corrections to the AI Agent
+- Repeat Steps 3 and 4 as many times as necessary
+- NOTE: Some pages required 3+ iterations or manual changes
+
+STEP 5: Final Verification
+--------------------------
+- Verify the AI Agent added the path to released-pages.php
+- Upload all changes to the repository
+
+
+================================================================================
+AI AGENT STEPS (Automated Process)
+================================================================================
+
+STEP 1: Content Extraction
+--------------------------
+- Downloads HTML from production URL using curl
+- Extracts page title from <h1> or <title> tag
+- Extracts SEO fields (meta title, meta description)
+- Identifies all H2 headings and content sections
+
+STEP 2: Component Analysis
+--------------------------
+- Analyzes each content section
+- Proposes matching Statamic components
+- Generates component mapping table for human review
+
+STEP 3: YAML Generation
+-----------------------
+- Generates unique UUID v4 for the page
+- Creates markdown file with YAML frontmatter
+- Converts HTML content to Statamic block components
+- Includes:
+  * Page settings
+  * SEO configuration
+  * Content blocks array
+
+STEP 4: Apply Fixes
+-------------------
+- Receives feedback from human review
+- Updates links, content, component versions
+- Regenerates YAML with corrections
+- Repeats until human approves
+
+STEP 5: Routing Configuration
+-----------------------------
+- Adds page route to released-pages.php
+  Path: app/Routing/migration/released-pages.php
+  Format: '/start-a-business/[slug]'
+- Runs quote replacement script (replace_quotes_final.py)
+
+
+================================================================================
+KEY FILES
+================================================================================
+
+Scripts:
+- migrate-page.php          -> Creates initial page structure
+- component-helpers.php     -> Helper functions for components
+- verify-page-migration.php -> Automated verification
+- replace_quotes_final.py   -> Quote normalization (final step)
+
+Output Location:
+- /content/collections/start_a_business_pages/[slug].md
+
+Routing File:
+- /app/Routing/migration/released-pages.php
+
+
+================================================================================
+IMPORTANT NOTES
+================================================================================
+
+1. Some pages require explicit content passing due to React/Next.js rendering
+2. Images must be uploaded manually via CMS Tool to S3
+3. Multiple iterations (3+) may be needed for complex pages
+4. Always verify the page is added to released-pages.php
+5. Run the quote replacement script as the final step
+
+
+================================================================================
